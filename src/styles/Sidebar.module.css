@@ -1,4 +1,24 @@
-
+.sidebar {
+    width: 180px;
+    position: fixed;
+    height: 100%;
+    background-color: #f8f9fa;
+    padding-top: 20px;
+    transition: transform 0.3s ease-in-out;
+  }
+    .content {
+      margin-left: 200px;
+      transition: margin-left 0.3s ease-in-out;
+    }
+  @media (max-width: 768px) {
+    .sidebar {
+      transform: translateX(-10%);
+    }
+    .content {
+      margin-left: 0;
+    }
+}
+/* 
 .sidebarOffCanvas{
     width: 190px !important;
     display: flex !important;
@@ -16,10 +36,14 @@
     }
 }
 
-.accordionBg{
-    background-color: black;
-}
-
+@media (max-width: 750px) {
+    .sidebarOffCanvas{
+        transform: none !important;
+        visibility: visible !important;
+        top: 65px !important;
+    }
+} 
 .accordionButton:after { 
     background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23ffffff'><path fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/></svg>") !important;
-  }
+  }  
+*/

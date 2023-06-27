@@ -1,3 +1,5 @@
+'use client';
+
 import { useRouter } from 'next/router';
 import { useSelector } from "react-redux";
 import Link from 'next/link';
@@ -24,7 +26,7 @@ const SaveBasket = () => {
         <Link href='./createBasket' className="float-end"><button className="btn btn-outline-primary btn-lg">Back</button></Link>
         <div className=''>
         <button type="button" className="btn btn-success btn-lg" onClick={handleClick}>
-            <i class="bi bi-bag-check"></i> Save
+            <i className="bi bi-bag-check"></i> Save
         </button>
         </div>  
       </div>

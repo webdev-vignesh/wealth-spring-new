@@ -1,10 +1,10 @@
-import Head from "next/head";
+'use client';
+
 import Link from "next/link";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import { setData } from "@/store/dataSlice";
-import Layout from "@/pages/admin";
-import DashCards from "../dashCards";
+import DashCards from "../page/dashCards";
 
 const DashboardPage = () => {
 
@@ -22,13 +22,7 @@ const DashboardPage = () => {
   return (
     (loggedIn)  
     ?
-    (<div className="mt-5 ms-5 w-100">
-      {/* Page Name */}
-      <Head>
-        <title>Wealth Spring | Admin Dashboard</title>
-        <meta property="og:title" content="Wealth Spring | Admin Dashboard" key="title" />
-      </Head>
-
+    (<div className="mt-5 ms-5">
       {/* Dashboard */}
       <DashCards />
 

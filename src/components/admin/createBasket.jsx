@@ -1,3 +1,5 @@
+'use client';
+
 import { setSelectedBasket } from "@/store/basketSlice";
 import Link from "next/link";
 import { useSelector, useDispatch } from "react-redux";

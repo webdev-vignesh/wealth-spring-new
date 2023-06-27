@@ -2,10 +2,10 @@
 
 import React, { useRef } from "react";
 import { useState, useEffect } from 'react';
-import jwt  from "jsonwebtoken";
-import CryptoJS from "crypto-js";
 import Image from "next/image";
-import logo from "../../public/logo1.png";
+import logo from "@/../public/logo1.png";
+import CryptoJS from "crypto-js";
+import jwt  from "jsonwebtoken";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { setLoggedIn } from "@/store/authSlice";
@@ -17,8 +17,8 @@ import { setPassword, setUser } from "@/store/userSlice";
 const  LoginAuth = () => {
 
   // declaring state variables
-  const user = useSelector((state) => state.user.user);
-  const password = useSelector((state) => state.user.password);
+  // const user = useSelector((state) => state.user.user);
+  // const password = useSelector((state) => state.user.password);
   
   const [breakpoint, setBreakpoint] = useState('');
   const [captchaValue, setCaptchaValue] = useState('');
@@ -72,6 +72,8 @@ const  LoginAuth = () => {
     const iterations = 1000;
     const keySize = 256 / 32 + 128 / 32;
     const key = CryptoJS.PBKDF2(SECRET_KEY, salt, { keySize: keySize, iterations: iterations });
+    const keyString = CryptoJS.enc.Hex.stringify(key);
+    console.log(keyString)
     const iv = CryptoJS.enc.Hex.parse("26463b878c7e8239e01aa17b21d8228e");
     
     const encryptedUser = CryptoJS.AES.encrypt(user, key, { iv: iv }).toString();
@@ -85,13 +87,15 @@ const  LoginAuth = () => {
     
     // destructuring values object
     const { username, password, captcha } = values;
+    // dispatch(setLoggedIn(true));
+    // router.push('/admin');
 
     // checking if login credentials are correct
     if(username === 'admin12' && password === 'admin12' && captcha === captchaValue){
 
       // signing the username, password with secret key
       // using jwt to create a authentication token
-      const { username, password, captcha } = values;
+      
       const { encryptedUser, encryptedPassword } = encryptedCredentials(username, password, process.env.NEXT_PUBLIC_SECRET_KEY);
       const token = jwt.sign({encryptedUser, encryptedPassword}, process.env.NEXT_PUBLIC_SECRET_KEY);
 
@@ -164,11 +168,11 @@ const  LoginAuth = () => {
             
             {/* Form */}
             {/* Passing onSubmit parameter to handleSubmit function */}
-            <form noValidate onSubmit={handleSubmit} style={{width: '40%'}} className="shadow border border-gray rounded p-5">
+            <form noValidate onSubmit={handleSubmit} style={{width: ''}} className="border border-gray rounded p-5">
               <div  className="text-center">
                 <Image src={logo} width={200} height={60} alt="wealth spring logo" />
               </div>
-              <p className="fw-semibold text-center my-4 fs-5">Sign in <span className="fw-normal fs-6"><br/>to your account</span></p>
+              <p className="fw-normal text-center my-4 fs-4">Sign in <span className="fw-normal fs-6"><br/>to your account</span></p>
               
               {/* Username */}
               {/* Our input html with passing formik parameters like handleChange, values, handleBlur to input properties */}
@@ -179,7 +183,7 @@ const  LoginAuth = () => {
                   onBlur={handleBlur}
                   value={values.username}
                   placeholder="Enter username"
-                  className="form-control inp_text mt-4 border-secondary-subtle"
+                  className="form-control inp_text mt-4 border-secondary-subtle fs-6"
                   id="username"
                 />
               {/* If validation is not passed show errors */}
@@ -199,7 +203,7 @@ const  LoginAuth = () => {
                   onBlur={handleBlur}
                   value={values.password}
                   placeholder="Enter password"
-                  className="form-control border-secondary-subtle"
+                  className="form-control border-secondary-subtle fs-6"
                 />
                 <button className="btn border" type="button" id="password-visible" onClick={() => setShowPassword(false)}><i className="bi bi-eye"></i></button>
               </div>
@@ -215,7 +219,7 @@ const  LoginAuth = () => {
                   placeholder="Enter password"
                   aria-label="password hidden"
                   aria-description="password-hide"
-                  className="form-control border-secondary-subtle"
+                  className="form-control border-secondary-subtle fs-6"
                 />
                 <button className="btn border" type="button" id="password-hide" onClick={() => setShowPassword(true)}><i className="bi bi-eye-slash"></i></button>
               </div>
@@ -228,8 +232,8 @@ const  LoginAuth = () => {
               </p>
 
               {/* Captcha */}
-              <div className="w-50">
-                <div className="input-group mb-3" style={{width: '80%'}}>
+              <div className="w-75">
+                <div className="input-group mb-3" style={{width: '70%'}}>
                   <input 
                     disabled
                     type="text" 

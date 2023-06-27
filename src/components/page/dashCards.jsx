@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "../styles/dashCards.module.css";
+import styles from "@/styles/dashCards.module.css";
 
 const DashCards = () => {
     return(

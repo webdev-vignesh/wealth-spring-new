@@ -11,11 +11,24 @@ const CreateBasket = () => {
 
   const loggedIn = useSelector((state) => state.auth.loggedIn);
   const dispatch = useDispatch();
-  const [ basketId, setBasketId ] = useState(null);
+  const [ equityPrice, setEquityPrice ] = useState(null);
+  let [rows, setRows] = useState(1);
+  let [rowData, setRowData] = useState([
+    {
+      constituents: '',
+      exchange: '',
+      orderType: ''
+    }
+  ]);
 
-  useEffect( () => {
-    setBasketId(getEquityPrice());
-  }, [])
+  async function getPrice(value) {
+    let result = await getEquityPrice(value);
+    setEquityPrice(result);
+  }
+
+  // useEffect( () => {
+  //   setEquityPrice(getEquityPrice());
+  // }, [])
 
   return (
     loggedIn 
@@ -35,13 +48,22 @@ const CreateBasket = () => {
           <input disabled type="text" className="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" />
         </div>
         <div className="input-group input-group-sm">
-          <label className="input-group-text" htmlFor="inputGroupSelect01">Choose /Create Basket</label>
+          <label className="input-group-text" htmlFor="inputGroupSelect01">Create Basket</label>
           <select className="form-select" id="inputGroupSelect01" onChange={(e) => {dispatch(setSelectedBasket(e.target.value))}}>
             <option value="1">Basket 1</option>
             <option value="2">Basket 2</option>
             <option value="3">Basket 3</option>
             <option value="new">New Basket</option>
           </select>
+        </div>
+        <div className="ms-2">
+          <button className="btn btn-sm btn-danger"
+            onClick={() => {
+              setRows(++rows);
+            }}
+          >
+            <i class="bi bi-plus-lg"></i>
+          </button>
         </div>
       </div>
     
@@ -60,52 +82,63 @@ const CreateBasket = () => {
               <th scope="col" style={{width: '15%'}}>Current Price &#8377;</th>
               <th scope="col" style={{width: '10%'}}>Quantity</th>
               <th>Total Price</th>
+              <th></th>
             </tr>
           </thead>
-          <tbody>
+            <tbody>
 
-            {/* table 1 */}
-            <tr>
-              <th scope="row">1</th>
-              <td>
-                <div>
-                  <select className="form-select w-75 fs-6">
-                    <option value="1">{basketData.basket[0].constituents[0]}</option>
-                    <option value="2">{basketData.basket[0].constituents[1]}</option>
-                    <option value="3">{basketData.basket[0].constituents[2]}</option>
-                  </select>
-                </div>
-              </td>
-              <td>
-                <div>
-                    <select className="form-select w-75 fs-6">
-                      <option value="1">{basketData.basket[0].exchange[0]}</option>
-                      <option value="2">{basketData.basket[0].exchange[1]}</option>
-                    </select>
-                </div>
-              </td>
-              <td>
-                <div>
-                    <select className="form-select w-75 fs-6">
-                      <option value="1">{basketData.basket[0].orderType[0]}</option>
-                      <option value="2">{basketData.basket[0].orderType[1]}</option>
-                    </select>
-                </div>
-              </td>
-              <td>
-                <div>
-                <input type="text" className="form-control w-75" />  
-                </div>
-              </td>
-              <td>2828.40</td>
-              <td>12</td>
-              <td>33940.8</td>
-            </tr>
-
-          </tbody>
+              {/* Iterating the JSON object to show certain no.of rows based on length */}
+              {Array.from({ length: rows }, (_, index) => (
+                <tr key={index}>
+                  <th scope="row">{index + 1}</th>
+                  <td>
+                    <div>
+                      <select className="form-select w-75 fs-6" name="constituents" onChange={(e) => getPrice(e.target.value)} >
+                        <option value="1">{basketData.basket[0].constituents[0]}</option>
+                        <option value="2">{basketData.basket[0].constituents[1]}</option>
+                        <option value="3">{basketData.basket[0].constituents[2]}</option>
+                      </select>
+                    </div>
+                  </td>
+                  <td>
+                    <div>
+                      <select className="form-select w-75 fs-6" name="exchange">
+                        <option value="1">{basketData.basket[0].exchange[0]}</option>
+                        <option value="2">{basketData.basket[0].exchange[1]}</option>
+                      </select>
+                    </div>
+                  </td>
+                  <td>
+                    <div>
+                      <select className="form-select w-75 fs-6" name="orderType">
+                        <option value="1">{basketData.basket[0].orderType[0]}</option>
+                        <option value="2">{basketData.basket[0].orderType[1]}</option>
+                      </select>
+                    </div>
+                  </td>
+                  <td>
+                    <div>
+                      <input type="text" className="form-control w-75" />
+                    </div>
+                  </td>
+                  <td>{setEquityPrice}</td>
+                  <td>12</td>
+                  <td>33940.8</td>
+                  <td>
+                    <button
+                    className="btn btn-sm btn-success"
+                      onClick={() => {
+                        setRows(--rows);
+                      }}
+                    >
+                      <i class="bi bi-dash-lg"></i>
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
         </table>
       </div>
-      
     </div>)
 
     : (<div className="d-flex row container m-5">

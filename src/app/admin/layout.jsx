@@ -11,9 +11,9 @@ const Layout = ({children}) => {
           <div className="container-fluid">
             <div className="row">
                     <Sidebar />
-                <div className={`${styles.content} col-md-9`}>
-                    {children}
-                </div>
+                  <div className={`${styles.content} col-md-9`}>
+                      {children}
+                  </div>
             </div>
           </div>
       </div>

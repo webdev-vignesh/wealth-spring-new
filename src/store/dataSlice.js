@@ -1,9 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+// initial state values
 const initialState = {
     data: [],
 }
 
+// creating a new slice
 const dataSlice = createSlice({
     name: 'data',
     initialState,

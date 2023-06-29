@@ -24,5 +24,8 @@
     "redux": "^4.2.1",
     "redux-persist": "^6.0.0",
     "yup": "^1.2.0"
+  },
+  "devDependencies": {
+    "node-sass": "^9.0.0"
   }
 }

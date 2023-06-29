@@ -1,9 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+// initial state values
 const initialState = {
   selectedBasket: '',
 };
 
+// creating a new slice
 const basketSlice = createSlice({
   name: 'basket',
   initialState,

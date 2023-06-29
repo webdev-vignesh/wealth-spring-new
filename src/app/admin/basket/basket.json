@@ -1,0 +1,9 @@
+{
+    "basket" : [
+        {
+            "constituents" : ["Asian Paints Ltd", "Reliance Industries Ltd", "Reddington India Ltd"],
+            "exchange": ["BSE", "NSE"],
+            "orderType": ["Buy", "Sell"]
+        }
+    ]
+}

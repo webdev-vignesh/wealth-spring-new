@@ -1,5 +1,5 @@
 .sidebar {
-    width: 180px;
+    width: 200px;
     position: fixed;
     height: 100%;
     background-color: #f8f9fa;
@@ -12,12 +12,14 @@
     }
   @media (max-width: 768px) {
     .sidebar {
-      transform: translateX(-10%);
+      transform: translateX(-100%);
+      width: 180px;
     }
     .content {
       margin-left: 0;
     }
 }
+
 /* 
 .sidebarOffCanvas{
     width: 190px !important;

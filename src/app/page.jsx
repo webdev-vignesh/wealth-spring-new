@@ -14,7 +14,7 @@ export default function Home() {
     <div className='container'>
       <div className='row row-cols-2 d-flex justify-content-center align-items-center'>
         <div className='text-center col'>
-          <Image src={logo} />
+          <Image src={logo} alt="logo" />
           <h5>Building Wealth, One Step at a Time.</h5>
         </div>
         <div className='col'>

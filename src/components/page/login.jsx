@@ -87,8 +87,9 @@ const  LoginAuth = () => {
     
     // destructuring values object
     const { username, password, captcha } = values;
-    // dispatch(setLoggedIn(true));
-    // router.push('/admin');
+    dispatch(setLoggedIn(true));
+    dispatch(setUser(username));
+    router.push('/admin');
 
     // checking if login credentials are correct
     if(username === 'admin12' && password === 'admin12' && captcha === captchaValue){
@@ -273,4 +274,4 @@ const  LoginAuth = () => {
   );
 }
 
-export default LoginAuth;
+export default LoginAuth;  

@@ -19,26 +19,40 @@ const CreateBasket = () => {
   const [ totalAmount, setTotalAmount ] = useState(null);
   let [ weight, setWeight ] = useState(null);
   let [ quantity, setQuantity ] = useState(null);
-  let [ data, setData ] = useState([]);
-  let [ rowData, setRowData ] = useState(
-    [
-      {
-        'constituents': data.map((instrument, index) => instrument.instrumentNmae),
-    
-      }
-    ]);
-  let [ rows, setRows ] = useState(1);
-  const basketTemplate = [
-      {
-        "constituents" : [],
-        "exchange": ["BSE", "NSE"],
-        "orderType": ["Buy", "Sell"]
-    }
-  ]
+  let [equityData, setEquityData] = useState([]);
+  let [rowData, setRowData] = useState([
+    {
+      constituents: [],
+      isinNo: [],
+      exchange: null,
+      orderType: null,
+      weight: null,
+      equityPrice: null,
+      quantity: null,
+      rowAmount: null,
+      selectedIsin: "",
+      selectedExchange: "",
+    },
+  ]);
+  let [rows, setRows] = useState(1);
+  const [basketTemplate, setBasketTemplate] = useState({
+    constituents: [],
+    isinNo: [],
+    exchange: ["BSE", "NSE"],
+    orderType: ["Buy", "Sell"],
+    weight: null,
+    equityPrice: null,
+    quantity: null,
+    rowAmount: null,
+    selectedIsin: "",
+    selectedExchange: "",
+  });
 
-  async function getPrice() {
+  async function getPrice(constituent, exchange, index) {
     let result = await getEquityPrice(constituent, exchange);
-    setEquityPrice(result);
+    const updatedRowData = [...rowData];
+    updatedRowData[index].equityPrice = result;
+    setRowData(updatedRowData);
   }
 
   async function weightAge(value){
@@ -47,10 +61,64 @@ const CreateBasket = () => {
     setQuantity(qty);
   }
 
-  useEffect( () => {async () => {
-    let details = await getInstrumentDetails();
-    setData(details);
-  }}, [])
+  const addRow = () => {
+    const firstRow = rowData[0];
+    const newRow = {
+      constituents: [...firstRow.constituents],
+      isinNo: [...firstRow.isinNo],
+      exchange: firstRow.exchange,
+      orderType: firstRow.orderType,
+      weight: null,
+      equityPrice: null,
+      quantity: null,
+      rowAmount: null,
+      selectedIsin: "",
+      selectedExchange: "",
+    };
+    setRowData([...rowData, newRow]);
+    setRows((prevRows) => prevRows + 1);
+  };
+
+  const handleDeleteRow = (index) => {
+    return () => {
+      setRows(rows - 1);
+      deleteRow(index);
+    };
+  };
+  
+  const deleteRow = (index) => {
+    const updatedRowData = [...rowData];
+    updatedRowData.splice(index,1);
+    setRowData(updatedRowData);
+  }
+
+  useEffect(() => {
+    const fetchData = async () => {
+      let details = await getInstrumentDetails();
+      setEquityData(details);
+      setRowData([
+        {
+          constituents: details.map((data) => data.instrumentName),
+          isinNo: details.map((data) => data.isinNo),
+          exchange: ["BSE", "NSE"],
+          orderType: ["Buy", "Sell"],
+          weight: null,
+          equityPrice: null,
+          quantity: null,
+          rowAmount: null,
+          selectedIsin: "",
+          selectedExchange: "",
+        },
+      ]);
+      setBasketTemplate((prevTemplate) => ({
+        ...prevTemplate,
+        constituents: details.map((data) => data.instrumentName),
+        isinNo: details.map((data) => data.isinNo),
+      }));
+    };
+  
+    fetchData();
+  }, []);
 
   return (
     loggedIn 
@@ -80,9 +148,7 @@ const CreateBasket = () => {
         </div>
         <div className="ms-2">
           <button className="btn btn-sm btn-success"
-            onClick={() => {
-              setRows(++rows);
-            }}
+            onClick={addRow}
           >
             <i className="bi bi-plus-lg"></i>
           </button>
@@ -110,31 +176,47 @@ const CreateBasket = () => {
             <tbody>
 
               {/* Iterating the JSON object to show certain no.of rows based on length */}
-              {Array.from({ length: rows }, (_, index) => (
+              {rowData.map((data, index) => (
                 <tr key={index}>
                   <th scope="row">{index + 1}</th>
                   <td>
                     <div>
-                      <select className="form-select w-75 " name="constituents" onChange={(e) => setConstituent(e.target.value)} style={{fontSize: 12}} >
+                      {data.isinNo && data.constituents && (
+                      <select className="form-select w-75 " name="constituents"           
+                      onChange={(e) => {
+                          const updatedRowData = [...rowData];
+                          updatedRowData[index].selectedIsin = e.target.value;
+                          setRowData(updatedRowData);
+                        }}
+                        style={{fontSize: 12}} >
                         <option value="" selected disabled>-Select-</option>
-                        {rowData.map((data, index) => {
-                          return <option value={data.isinNo} key={index}>{data.instrumentName}</option>
-                        })}
+                        {data.isinNo.map((isin, idx) => (
+                          <option value={isin} key={idx}>
+                            {data.constituents[idx]}
+                          </option>
+                        ))}
                         {/* <option value="1">{basketTemplate[0].constituents[0]}</option>
                         <option value="2">{basketTemplate[0].constituents[1]}</option>
                         <option value="3">{basketTemplate[0].constituents[2]}</option> */}
                       </select>
+                      )}
                     </div>
                   </td>
                   <td>
                     <div>
-                      <select className="form-select w-75 " name="exchange" style={{fontSize: 12}} onChange={(e) => {
-                        setExchange(e.target.value);
-                        getPrice();
+                      <select className="form-select w-75 " name="exchange" style={{fontSize: 12}}   onChange={(e) => {
+                        const updatedRowData = [...rowData];
+                        updatedRowData[index].selectedExchange = e.target.value;
+                        setRowData(updatedRowData);
+                        getPrice(updatedRowData[index].selectedIsin, e.target.value, index);
                       }}>
                         <option value="" selected disabled>-Select-</option>
-                        <option value="BSE">{basketTemplate[0].exchange[0]}</option>
-                        <option value="NSE">{basketTemplate[0].exchange[1]}</option>
+                        {data.exchange && data.exchange.length > 0 && (
+                          <>
+                            <option value="BSE">{data.exchange[0]}</option>
+                            <option value="NSE">{data.exchange[1]}</option>
+                          </>
+                        )}
                       </select>
                     </div>
                   </td>
@@ -142,8 +224,12 @@ const CreateBasket = () => {
                     <div>
                       <select className="form-select w-75 " name="orderType" style={{fontSize: 12}} onChange={(e) => setOrderType(e.target.value)}>
                         <option value="" selected disabled>-Select-</option>
-                        <option value="Buy">{basketTemplate[0].orderType[0]}</option>
-                        <option value="Sell">{basketTemplate[0].orderType[1]}</option>
+                        {data.orderType && data.orderType.length > 0 && (
+                          <>
+                            <option value="Buy">{data.orderType[0]}</option>
+                            <option value="Sell">{data.orderType[1]}</option>
+                          </>
+                        )}
                       </select>
                     </div>
                   </td>
@@ -152,16 +238,14 @@ const CreateBasket = () => {
                       <input type="text" className="form-control w-75" style={{fontSize: 12}} onChange={(e) => weightAge(e.target.value)} />
                     </div>
                   </td>
-                  <td style={{fontSize: 12}}>{equityPrice}</td>
+                  <td style={{fontSize: 12}}>{data.equityPrice}</td>
                   <td style={{fontSize: 12}}>{quantity}</td>
                   <td style={{fontSize: 12}}></td>
                   <td>
                     <div className="d-flex">
                       <button
                       className="btn btn-sm btn-outline-danger me-2"
-                        onClick={() => {
-                          setRows(--rows);
-                        }}
+                        onClick={handleDeleteRow(index)}
                       >
                         <i className="bi bi-dash-lg"></i>
                       </button>

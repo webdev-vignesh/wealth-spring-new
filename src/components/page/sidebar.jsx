@@ -121,14 +121,16 @@ const Sidebar = () => {
                         </div>
 
                         {/* Admin option */}
-                        <div className="dropup-center dropup" style={{position: 'absolute', bottom: '10%'}}>
+                        <div className="dropup-center dropup" style={{position: 'absolute', bottom: '10%', fontSize: '14px'}}>
                             <Link className="px-3 pb-3 nav-link dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" href="#">
                                 <i className="bi bi-person-circle"></i> <span >Admin</span>
                             </Link>
                             <ul className="dropdown-menu">
-                                <li><a className="dropdown-item" href="#">About</a></li>
+                                <li><a className="dropdown-item" href="#" style={{fontSize: '14px'}}>About</a></li>
                                 <li>
-                                    <button className="dropdown-item" onClick={() => {
+                                    <button className="dropdown-item" 
+                                    style={{fontSize: '14px'}}
+                                    onClick={() => {
                                         dispatch(setLoggedIn(false));
                                         dispatch(setUser(''));
                                         router.push('/');

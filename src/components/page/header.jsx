@@ -134,14 +134,16 @@ const Header = () => {
                                 </div>
 
                                 {/* Admin option */}
-                                <div className="dropup-center dropup text-light" style={{position: 'absolute', bottom: '10%'}}>
+                                <div className="dropup-center dropup text-light" style={{position: 'absolute', bottom: '10%', fontSize: '14px'}}>
                                     <Link className="px-3 pb-3 nav-link dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" href="#">
                                         <i className="bi bi-person-circle"></i> <span >Admin</span>
                                     </Link>
                                     <ul className="dropdown-menu">
-                                        <li><a className="dropdown-item" href="#">About</a></li>
+                                        <li><a className="dropdown-item" href="#" style={{fontSize: '14px'}}>About</a></li>
                                         <li>
-                                            <button className="dropdown-item" onClick={() => {
+                                            <button className="dropdown-item" 
+                                            style={{fontSize: '14px'}}
+                                            onClick={() => {
                                                 dispatch(setLoggedIn(false));
                                                 dispatch(setUser(''));
                                                 router.push('/');
@@ -161,7 +163,7 @@ const Header = () => {
                     {/* Middle element - Search bar */}
                     <form className="d-flex ms-10 d-none d-md-block" role="search">
                         <div className="input-group">
-                            <input className="form-control" type="search" placeholder="Search" aria-label="Search a Person, data" aria-describedby="button-addon1" id="button-addon1" />
+                            <input className="form-control" type="search" style={{fontSize: '14px'}} placeholder="Search" aria-label="Search a Person, data" aria-describedby="button-addon1" id="button-addon1" />
                             <button className="btn text-bg-light" type="submit" id="button-addon2">
                                 <i className="bi bi-search"></i>
                             </button>
@@ -176,14 +178,16 @@ const Header = () => {
                         </span>
                         {/* Admin dropdown button */}
                         <div className="dropdown">
-                            <div className="dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <div className="dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style={{fontSize: '14px'}}>
                                 Admin <i className="bi bi-person-circle"></i>
                             </div>
                             <ul className="dropdown-menu dropdown-menu-end">
-                                <li><a className="dropdown-item" href="#">About</a></li>
+                                <li><a className="dropdown-item" href="#" style={{fontSize: '14px'}}>About</a></li>
                                 {/* <li><hr className="dropdown-divider" /></li> */}
                                 <li>
-                                    <button className="dropdown-item" onClick={() => {
+                                    <button className="dropdown-item" 
+                                    style={{fontSize: '14px'}}
+                                    onClick={() => {
                                         dispatch(setLoggedIn(false));
                                         dispatch(setUser(''));
                                         router.push('/');

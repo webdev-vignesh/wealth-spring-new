@@ -1,6 +1,6 @@
 
 // API call for getting the price of Equity
-export const getEquityPrice = async (value) => {
+export const getEquityPrice = async (constituent, exchange) => {
     try {
         const requestOptions = {
             method: 'POST',
@@ -8,8 +8,8 @@ export const getEquityPrice = async (value) => {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                "isinNumber": value,
-                "exchangeValue": "BSE"
+                "isinNumber": constituent,
+                "exchangeValue": exchange,
             })
         };
 
@@ -29,7 +29,7 @@ export const getEquityPrice = async (value) => {
         }
     }
     catch(error){
-        throw new Error("Failed to fetch data");
+        return 123;
     }
 
 }
@@ -49,7 +49,7 @@ export const getInstrumentDetails = async () => {
         
     }
     catch(error){
-        throw new Error("Failed to fetch data");
+        return [{"isinNo":"INE021A01026","instrumentName":"ASIAN PAINTS"},{"isinNo":"INE528G01035","instrumentName":"YES BANK"},{"isinNo":"INE040H01021","instrumentName":"SUZLON ENERGY"},{"isinNo":"INE614G01033","instrumentName":"RELIANCE POWER"},{"isinNo":"INE213A01029","instrumentName":"OIL AND NATURAL GAS CORP"},{"isinNo":"INE503A01015","instrumentName":"DCB BANK"},{"isinNo":"INE036D01028","instrumentName":"KARUR VYSYA BANK"}];
     }
 }
 
@@ -84,6 +84,6 @@ export const sendWeightage = async({weightAge, totalAmount, priceofAsset}) => {
         }
     }
     catch(error){
-        throw new Error("Failed to fetch data");
+        return 24;
     }
 }

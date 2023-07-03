@@ -11,31 +11,45 @@ const CreateBasket = () => {
 
   const loggedIn = useSelector((state) => state.auth.loggedIn);
   const dispatch = useDispatch();
+  
+  const [ exchange, setExchange] = useState('');
+  const [ orderType, setOrderType ] = useState('');
+  const [ constituent, setConstituent ] = useState('');
   const [ equityPrice, setEquityPrice ] = useState(null);
   const [ totalAmount, setTotalAmount ] = useState(null);
-  let [rows, setRows] = useState(1);
-  let [weight, setWeight] = useState(null);
-  let [rowData, setRowData] = useState([]);
+  let [ weight, setWeight ] = useState(null);
+  let [ quantity, setQuantity ] = useState(null);
+  let [ data, setData ] = useState([]);
+  let [ rowData, setRowData ] = useState(
+    [
+      {
+        'constituents': data.map((instrument, index) => instrument.instrumentNmae),
+    
+      }
+    ]);
+  let [ rows, setRows ] = useState(1);
   const basketTemplate = [
       {
         "constituents" : [],
-        "exchange": [],
+        "exchange": ["BSE", "NSE"],
         "orderType": ["Buy", "Sell"]
     }
   ]
 
-  async function getPrice(value) {
-    let result = await getEquityPrice(value);
+  async function getPrice() {
+    let result = await getEquityPrice(constituent, exchange);
     setEquityPrice(result);
   }
 
   async function weightAge(value){
     setWeight(value);
-    sendWeightage({weight, totalAmount, equityPrice})
+    let qty = sendWeightage({weight, totalAmount, equityPrice});
+    setQuantity(qty);
   }
 
   useEffect( async () => {
-    setRowData(await getInstrumentDetails());
+    let details = await getInstrumentDetails();
+    setData(details);
   }, [])
 
   return (
@@ -43,7 +57,7 @@ const CreateBasket = () => {
     ? (<div className="container mt-4">
 
       {/* User Basket */}
-      <h5 className="my-2 fw-bold">Create Basket</h5>
+      <h6 className="my-2 fw-bold">Create Basket</h6>
 
       {/* Investment row */}
       <div className="d-flex justify-content-between mb-2">
@@ -56,7 +70,7 @@ const CreateBasket = () => {
           <input disabled type="number" className="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" />
         </div>
         <div className="input-group input-group-sm">
-          <label className="input-group-text" htmlFor="inputGroupSelect01">Create Basket</label>
+          <label className="input-group-text" htmlFor="inputGroupSelect01">Select Basket</label>
           <select className="form-select" id="inputGroupSelect01" onChange={(e) => {dispatch(setSelectedBasket(e.target.value))}}>
             <option value="1">Basket 1</option>
             <option value="2">Basket 2</option>
@@ -70,7 +84,7 @@ const CreateBasket = () => {
               setRows(++rows);
             }}
           >
-            <i class="bi bi-plus-lg"></i>
+            <i className="bi bi-plus-lg"></i>
           </button>
         </div>
       </div>
@@ -79,13 +93,13 @@ const CreateBasket = () => {
       
       {/* Orders Table */}
       <div style={{overflowY: 'auto', height: '70vh'}}>
-        <table className="table table-hover table-bordered border-dark fs-6">
+        <table className="table table-hover table-bordered" style={{fontSize: 14}}>
           <thead>
             <tr>
               <th scope="col">#</th>
               <th scope="col" style={{width: '30%'}}>Constituents</th>
-              <th scope="col" style={{width: '15%'}}>Exchange</th>
-              <th scope="col" style={{width: '15%'}}>Order Type</th>
+              <th scope="col" style={{width: '20%'}}>Exchange</th>
+              <th scope="col" style={{width: '20%'}}>Order Type</th>
               <th scope="col" style={{width: '15%'}}>Weights %</th>
               <th scope="col" style={{width: '15%'}}>Price &#8377;</th>
               <th scope="col" style={{width: '10%'}}>Quantity</th>
@@ -101,10 +115,10 @@ const CreateBasket = () => {
                   <th scope="row">{index + 1}</th>
                   <td>
                     <div>
-                      <select className="form-select w-75 fs-6" name="constituents" onChange={(e) => getPrice(e.target.value)} >
-                        <option value="" selected disabled>Select a Constituent</option>
+                      <select className="form-select w-75 " name="constituents" onChange={(e) => setConstituent(e.target.value)} style={{fontSize: 12}} >
+                        <option value="" selected disabled>-Select-</option>
                         {rowData.map((data, index) => {
-                          <option value={data.isinNo} key={index}>{data.instrumentName}</option>
+                          return <option value={data.isinNo} key={index}>{data.instrumentName}</option>
                         })}
                         {/* <option value="1">{basketTemplate[0].constituents[0]}</option>
                         <option value="2">{basketTemplate[0].constituents[1]}</option>
@@ -114,34 +128,33 @@ const CreateBasket = () => {
                   </td>
                   <td>
                     <div>
-                      <select className="form-select w-75 fs-6" name="exchange">
-                      <option value="" selected disabled>Select a Exchange</option>
-                      {rowData.map((data, index) => {
-                          <option value={data.isinNo} key={index}>{data.instrumentName}</option>
-                        })}
-                      {/* <option value="">Select Exchange</option>
-                      <option value="1">{basketTemplate[0].exchange[0]}</option>
-                      <option value="2">{basketTemplate[0].exchange[1]}</option> */}
+                      <select className="form-select w-75 " name="exchange" style={{fontSize: 12}} onChange={(e) => {
+                        setExchange(e.target.value);
+                        getPrice();
+                      }}>
+                        <option value="" selected disabled>-Select-</option>
+                        <option value="BSE">{basketTemplate[0].exchange[0]}</option>
+                        <option value="NSE">{basketTemplate[0].exchange[1]}</option>
                       </select>
                     </div>
                   </td>
                   <td>
                     <div>
-                      <select className="form-select w-75 fs-6" name="orderType">
-                        <option value="" selected disabled>Select Order Type</option>
-                        <option value="1">{basketTemplate[0].orderType[0]}</option>
-                        <option value="2">{basketTemplate[0].orderType[1]}</option>
+                      <select className="form-select w-75 " name="orderType" style={{fontSize: 12}} onChange={(e) => setOrderType(e.target.value)}>
+                        <option value="" selected disabled>-Select-</option>
+                        <option value="Buy">{basketTemplate[0].orderType[0]}</option>
+                        <option value="Sell">{basketTemplate[0].orderType[1]}</option>
                       </select>
                     </div>
                   </td>
                   <td>
                     <div>
-                      <input type="text" className="form-control w-75" onChange={(e) => weightAge(e.target.value)} />
+                      <input type="text" className="form-control w-75" style={{fontSize: 12}} onChange={(e) => weightAge(e.target.value)} />
                     </div>
                   </td>
-                  <td>{setEquityPrice}</td>
-                  <td>12</td>
-                  <td>33940.8</td>
+                  <td style={{fontSize: 12}}>{equityPrice}</td>
+                  <td style={{fontSize: 12}}>{quantity}</td>
+                  <td style={{fontSize: 12}}></td>
                   <td>
                     <div className="d-flex">
                       <button
@@ -150,7 +163,7 @@ const CreateBasket = () => {
                           setRows(--rows);
                         }}
                       >
-                        <i class="bi bi-dash-lg"></i>
+                        <i className="bi bi-dash-lg"></i>
                       </button>
                       <button
                       className="btn btn-sm btn-outline-success"
@@ -158,7 +171,7 @@ const CreateBasket = () => {
                           setRows(--rows);
                         }}
                       >
-                        <i class="bi bi-check2"></i>
+                        <i className="bi bi-check2"></i>
                       </button>
                     </div>
                   </td>

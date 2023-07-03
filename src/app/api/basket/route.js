@@ -1,25 +1,23 @@
+
+// API call for getting the price of Equity
 export const getEquityPrice = async (value) => {
     try {
-        let isin;
-        if(value == 2){
-            isin = "INE021A01026";
-        }
         const requestOptions = {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                "isinNumber": isin,
+                "isinNumber": value,
                 "exchangeValue": "BSE"
             })
         };
 
         let data;
-        const result = await fetch("http://localhost:8083/equity-price", requestOptions);
+        const response = await fetch("http://localhost:8083/equity-price", requestOptions);
         
-        if (result.ok) {
-            const responseText = await result.text();
+        if (response.ok) {
+            const responseText = await response.text();
             if (responseText) {
             data = JSON.parse(responseText);
             }
@@ -31,8 +29,28 @@ export const getEquityPrice = async (value) => {
         }
     }
     catch(error){
-        console.error(error);
+        throw new Error("Failed to fetch data");
         return '-';
     }
 
+}
+
+// API call to get the constituents and exchange details
+export const getInstrumentDetails = async () => {
+    try{
+        const response = await fetch("https:localhost:8083/")
+        
+        if(response.ok){
+            const jsonData = await response.json();
+            return jsonData;
+        }
+        else{
+            throw new Error("Failed to fetch data");
+        }
+        
+    }
+    catch(error){
+        throw new Error("Failed to fetch data");
+        retutn;
+    }
 }

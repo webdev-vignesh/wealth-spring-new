@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import basketData from "@/app/admin/basket/basket.json"
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { getEquityPrice } from "@/app/api/basket/route";
+import { getEquityPrice, getInstrumentDetails } from "@/app/api/basket/route";
 
 const CreateBasket = () => {
 
@@ -13,26 +13,27 @@ const CreateBasket = () => {
   const dispatch = useDispatch();
   const [ equityPrice, setEquityPrice ] = useState(null);
   let [rows, setRows] = useState(1);
-  let [rowData, setRowData] = useState([
-    {
-      constituents: '',
-      exchange: '',
-      orderType: ''
+  let [rowData, setRowData] = useState([]);
+  const basketTemplate = [
+      {
+        "constituents" : [],
+        "exchange": [],
+        "orderType": ["Buy", "Sell"]
     }
-  ]);
+  ]
 
   async function getPrice(value) {
     let result = await getEquityPrice(value);
     setEquityPrice(result);
   }
 
-  // useEffect( () => {
-  //   setEquityPrice(getEquityPrice());
-  // }, [])
+  useEffect( async () => {
+    setRowData(await getInstrumentDetails());
+  }, [])
 
   return (
     loggedIn 
-    ? (<div className="container">
+    ? (<div className="container mt-4">
 
       {/* User Basket */}
       <h5 className="my-2 fw-bold">Create Basket</h5>
@@ -57,7 +58,7 @@ const CreateBasket = () => {
           </select>
         </div>
         <div className="ms-2">
-          <button className="btn btn-sm btn-danger"
+          <button className="btn btn-sm btn-success"
             onClick={() => {
               setRows(++rows);
             }}
@@ -79,9 +80,9 @@ const CreateBasket = () => {
               <th scope="col" style={{width: '15%'}}>Exchange</th>
               <th scope="col" style={{width: '15%'}}>Order Type</th>
               <th scope="col" style={{width: '15%'}}>Weights %</th>
-              <th scope="col" style={{width: '15%'}}>Current Price &#8377;</th>
+              <th scope="col" style={{width: '15%'}}>Price &#8377;</th>
               <th scope="col" style={{width: '10%'}}>Quantity</th>
-              <th>Total Price</th>
+              <th>Total</th>
               <th></th>
             </tr>
           </thead>
@@ -94,25 +95,35 @@ const CreateBasket = () => {
                   <td>
                     <div>
                       <select className="form-select w-75 fs-6" name="constituents" onChange={(e) => getPrice(e.target.value)} >
-                        <option value="1">{basketData.basket[0].constituents[0]}</option>
-                        <option value="2">{basketData.basket[0].constituents[1]}</option>
-                        <option value="3">{basketData.basket[0].constituents[2]}</option>
+                        <option value="" selected disabled>Select a Constituent</option>
+                        {rowData.map((data, index) => {
+                          <option value={data.isinNo} key={index}>{data.instrumentName}</option>
+                        })}
+                        {/* <option value="1">{basketTemplate[0].constituents[0]}</option>
+                        <option value="2">{basketTemplate[0].constituents[1]}</option>
+                        <option value="3">{basketTemplate[0].constituents[2]}</option> */}
                       </select>
                     </div>
                   </td>
                   <td>
                     <div>
                       <select className="form-select w-75 fs-6" name="exchange">
-                        <option value="1">{basketData.basket[0].exchange[0]}</option>
-                        <option value="2">{basketData.basket[0].exchange[1]}</option>
+                      <option value="" selected disabled>Select a Exchange</option>
+                      {rowData.map((data, index) => {
+                          <option value={data.isinNo} key={index}>{data.instrumentName}</option>
+                        })}
+                      {/* <option value="">Select Exchange</option>
+                      <option value="1">{basketTemplate[0].exchange[0]}</option>
+                      <option value="2">{basketTemplate[0].exchange[1]}</option> */}
                       </select>
                     </div>
                   </td>
                   <td>
                     <div>
                       <select className="form-select w-75 fs-6" name="orderType">
-                        <option value="1">{basketData.basket[0].orderType[0]}</option>
-                        <option value="2">{basketData.basket[0].orderType[1]}</option>
+                        <option value="" selected disabled>Select Order Type</option>
+                        <option value="1">{basketTemplate[0].orderType[0]}</option>
+                        <option value="2">{basketTemplate[0].orderType[1]}</option>
                       </select>
                     </div>
                   </td>
@@ -125,14 +136,24 @@ const CreateBasket = () => {
                   <td>12</td>
                   <td>33940.8</td>
                   <td>
-                    <button
-                    className="btn btn-sm btn-success"
-                      onClick={() => {
-                        setRows(--rows);
-                      }}
-                    >
-                      <i class="bi bi-dash-lg"></i>
-                    </button>
+                    <div className="d-flex">
+                      <button
+                      className="btn btn-sm btn-outline-danger me-2"
+                        onClick={() => {
+                          setRows(--rows);
+                        }}
+                      >
+                        <i class="bi bi-dash-lg"></i>
+                      </button>
+                      <button
+                      className="btn btn-sm btn-outline-success"
+                        onClick={() => {
+                          setRows(--rows);
+                        }}
+                      >
+                        <i class="bi bi-check2"></i>
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

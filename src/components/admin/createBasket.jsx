@@ -47,10 +47,10 @@ const CreateBasket = () => {
     setQuantity(qty);
   }
 
-  useEffect( async () => {
+  useEffect( () => {async () => {
     let details = await getInstrumentDetails();
     setData(details);
-  }, [])
+  }}, [])
 
   return (
     loggedIn 

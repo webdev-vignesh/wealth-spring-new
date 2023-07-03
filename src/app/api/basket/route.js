@@ -30,7 +30,6 @@ export const getEquityPrice = async (value) => {
     }
     catch(error){
         throw new Error("Failed to fetch data");
-        return '-';
     }
 
 }
@@ -38,7 +37,7 @@ export const getEquityPrice = async (value) => {
 // API call to get the constituents and exchange details
 export const getInstrumentDetails = async () => {
     try{
-        const response = await fetch("https:localhost:8083/")
+        const response = await fetch("http://localhost:8083/")
         
         if(response.ok){
             const jsonData = await response.json();
@@ -51,6 +50,40 @@ export const getInstrumentDetails = async () => {
     }
     catch(error){
         throw new Error("Failed to fetch data");
-        retutn;
+    }
+}
+
+// API call to post the weightage and get the quantity and total price
+export const sendWeightage = async({weightAge, totalAmount, priceofAsset}) => {
+    try{
+        const requestOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                "weightAge": weightAge,
+                "totalAmount": totalAmount,
+                "priceofAsset": priceofAsset,
+            })
+        }
+
+        let data;
+        const response = await fetch("http://localhost:8083/quantity-calc", requestOptions);
+
+        if(response.ok) {
+            const responseText = await response.text();
+            if(responseText){
+                data = JSON.parse(responseText);
+            }
+        }
+        if(data){
+            return data.quantity;
+        } else {
+            throw new Error("Failed to fetch the quantity data");
+        }
+    }
+    catch(error){
+        throw new Error("Failed to fetch data");
     }
 }

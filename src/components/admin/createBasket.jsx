@@ -5,14 +5,16 @@ import { useSelector, useDispatch } from "react-redux";
 import basketData from "@/app/admin/basket/basket.json"
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { getEquityPrice, getInstrumentDetails } from "@/app/api/basket/route";
+import { getEquityPrice, getInstrumentDetails, sendWeightage } from "@/app/api/basket/route";
 
 const CreateBasket = () => {
 
   const loggedIn = useSelector((state) => state.auth.loggedIn);
   const dispatch = useDispatch();
   const [ equityPrice, setEquityPrice ] = useState(null);
+  const [ totalAmount, setTotalAmount ] = useState(null);
   let [rows, setRows] = useState(1);
+  let [weight, setWeight] = useState(null);
   let [rowData, setRowData] = useState([]);
   const basketTemplate = [
       {
@@ -25,6 +27,11 @@ const CreateBasket = () => {
   async function getPrice(value) {
     let result = await getEquityPrice(value);
     setEquityPrice(result);
+  }
+
+  async function weightAge(value){
+    setWeight(value);
+    sendWeightage({weight, totalAmount, equityPrice})
   }
 
   useEffect( async () => {
@@ -42,11 +49,11 @@ const CreateBasket = () => {
       <div className="d-flex justify-content-between mb-2">
         <div className="input-group input-group-sm me-5">
           <span className="input-group-text" id="inputGroup-sizing-sm">Enter Amount</span>
-          <input type="text" className="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" />
+          <input type="number" onChange={(e) => setTotalAmount(e.target.value)} className="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" />
         </div>
         <div className="input-group input-group-sm me-5">
           <span className="input-group-text" id="inputGroup-sizing-sm">Investment Amount</span>
-          <input disabled type="text" className="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" />
+          <input disabled type="number" className="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" />
         </div>
         <div className="input-group input-group-sm">
           <label className="input-group-text" htmlFor="inputGroupSelect01">Create Basket</label>
@@ -129,7 +136,7 @@ const CreateBasket = () => {
                   </td>
                   <td>
                     <div>
-                      <input type="text" className="form-control w-75" />
+                      <input type="text" className="form-control w-75" onChange={(e) => weightAge(e.target.value)} />
                     </div>
                   </td>
                   <td>{setEquityPrice}</td>
